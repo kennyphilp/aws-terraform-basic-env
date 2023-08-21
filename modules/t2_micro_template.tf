@@ -14,16 +14,16 @@ variable "key_pair_name" {
 
 resource "aws_launch_template" "first-template" {
   # Name of the launch template
-  name          = "first-template"
+  name = "t2_micro_template"
 
   # ID of the Amazon Machine Image (AMI) to use for the instance
-  image_id      = "ami-08a52ddb321b32a8c"
+  ami = "ami-08a52ddb321b32a8c"
 
   # Instance type for the EC2 instance
   instance_type = "t2.micro"
 
   # SSH key pair name for connecting to the instance
-  key_name = "${var.environment}"
+  key_name = var.key_pair_name
 
   # Block device mappings for the instance
   block_device_mappings {
@@ -38,6 +38,11 @@ resource "aws_launch_template" "first-template" {
     }
   }
 
+  connection {
+      user = "${var.EC2_USER}"
+      private_key = "${file("${var.PRIVATE_KEY_PATH}")}"
+  }
+
   # Tag specifications for the instance
   tag_specifications {
     # Specifies the resource type as "instance"
@@ -45,7 +50,7 @@ resource "aws_launch_template" "first-template" {
 
     # Tags to apply to the instance
     tags = {
-      Name = "Created first template"
+      Name = "Createdfirst template"
     }
   }
 }
