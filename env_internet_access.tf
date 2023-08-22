@@ -16,10 +16,10 @@ provider "aws" {
 variable "awsprops" {
   type = map(any)
   default = {
-    region        = "us-east-1"
+    region              = "us-east-1"
     publicsecgroupname  = "IAC-Public-Sec-Group"
-    privatesecgroupname  = "IAC-Private-Sec-Group"
-    key_pair_name = "KeyPairNorthVirginia"
+    privatesecgroupname = "IAC-Private-Sec-Group"
+    key_pair_name       = "KeyPairNorthVirginia"
   }
 }
 
@@ -188,6 +188,14 @@ resource "aws_security_group" "sg-ssh-allowed-private" {
     cidr_blocks = ["10.0.0.0/24"]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
   lifecycle {
     create_before_destroy = true
   }
@@ -195,7 +203,7 @@ resource "aws_security_group" "sg-ssh-allowed-private" {
 
 resource "aws_instance" "web_server_instance" {
 
-  count=1
+  count = 1
 
   launch_template {
     name = "t2_micro_template"
@@ -220,7 +228,7 @@ resource "aws_instance" "web_server_instance" {
 
 resource "aws_instance" "private_server_instance" {
 
-  count=1
+  count = 1
 
   launch_template {
     name = "t2_micro_template"
