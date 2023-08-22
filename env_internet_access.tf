@@ -103,11 +103,6 @@ resource "aws_route_table_association" "crta-subnet-private-1" {
   route_table_id = aws_route_table.private-crt.id
 }
 
-
-
-
-
-
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
@@ -117,13 +112,13 @@ resource "aws_internet_gateway" "igw" {
 }
 
 
-resource "aws_eip" "multi-ip" {
+resource "aws_eip" "natgtw-eip" {
 
 }
 
 
 resource "aws_nat_gateway" "natgtw" {
-  allocation_id = aws_eip.multi-ip.id
+  allocation_id = aws_eip.natgtw-eip.id
   subnet_id     = aws_subnet.subnet-public-1.id
 
   tags = {
@@ -239,6 +234,7 @@ resource "aws_instance" "private_server_instance" {
 
   vpc_security_group_ids = ["${aws_security_group.sg-ssh-allowed-private.id}"]
 
+  user_data = filebase64("${path.module}/scripts/yum_update_startup.sh")
 
   tags = {
     Name     = "EC2_Private_Instance_${count.index}_${var.environment}",
